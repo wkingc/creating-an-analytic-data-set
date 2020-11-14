@@ -1,0 +1,159 @@
+---
+bibliography: creating_an_analytic_data_set.bib
+biblio-style: apalike
+link-citations: yes
+output:  
+  bookdown::html_document2:
+    theme: default
+    highlight: textmate
+    code_folding: show
+    mathjax: local
+    self_contained: FALSE
+    number_sections: FALSE
+---
+
+# Introduction
+
+Creating an analytic data set is very important when doing data analysis and will be used to reproduce the results.
+
+An analytic data set should include the following:
+
+* Variables (observed data) used in the analysis
+* Variables (observed data) used to construct other variables used in the analysis
+* Variable labels
+* Variable coding
+
+This presentation will use the R programming language and assume the user is using Rstudio to compile their R markdown files into HTML [@Rlang2019; @Rstudio].  If you want to follow along with the R markdown, it can be downloaded <a href="https://waderstats.com/rstudio-files/creating_an_analytic_data_set.Rmd" target="_blank">here</a>.  The associated bibliography file is <a href="https://waderstats.com/rstudio-files/creating_an_analytic_data_set.bib" target="_blank">here</a>.
+
+# Libraries
+
+The libraries <i>knitr</i>, <i>bookdown</i>, and <i>kableExtra</i> are used to generate the HTML output [@knitr; @bookdown; @kableExtra].  The <i>ggplot2</i> library is loaded for the example data set that is used [@ggplot2].  The <i>Hmisc</i> and <i>DT</i> libraries provide functions needed to make and display the analytic data set [@Hmisc; @DT].
+
+```{r libraries, eval = TRUE, echo = TRUE, results = TRUE, warning = FALSE, message = FALSE}
+package_loader <- function(x, ...) {
+  if (x %in% rownames(installed.packages()) == FALSE) install.packages(x)
+  library(x, ...)
+}
+
+packages <- c("knitr", "bookdown", "kableExtra", "ggplot2", "Hmisc", "DT")
+
+invisible(sapply(X = packages, FUN = package_loader, character.only = TRUE))
+```
+
+# Example Data
+
+The example data for this presentation will be <b>mpg</b> from the <i>ggplot2</i> package.  From the description in the manual:
+
+> This dataset contains a subset of the fuel economy data that the EPA makes available <a href="http://fueleconomy.gov" target="_blank">here</a>. It contains only models which had a new release every year between 1999 and 2008 - this was used as a proxy for the popularity of the car.
+
+```{r ExampleData, eval = TRUE, echo = TRUE, results = TRUE, warning = FALSE, message = FALSE}
+data(mpg)
+mpg <- data.frame(mpg)
+
+kable(head(mpg), caption = "Header of <b>mpg</b>.", booktabs = TRUE, escape = FALSE) %>% kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+
+# Data Setup
+
+There are two essential parts to setting up the data.  First, make sure each variable is coded to reflect its class.  Second, we want to add labels to each variable in the data set using the label function of the <i>Hmisc</i> library.
+
+```{r ExampleDataSetup, eval = TRUE, echo = TRUE, results = TRUE, warning = FALSE, message = FALSE}
+set.seed(123)
+data(mpg)
+mpg <- data.frame(mpg)
+
+colnames(mpg)[which(colnames(mpg) == "manufacturer")] <- "manu"
+
+mpg$manu <- factor(mpg$manu)
+mpg$model <- factor(mpg$model)
+mpg$displ <- as.numeric(mpg$displ)
+mpg$year <- factor(mpg$year, levels = c("1999", "2008"), ordered = TRUE)
+
+mpg$dp <- as.Date(NA, origin = "1970-01-01")
+mpg$dp[which(mpg$year == "1999")] <- sample(seq(as.Date('1999-01-01', format = "%Y-%m-%d", origin = "1970-01-01"), as.Date('1999-12-25', format = "%Y-%m-%d", origin = "1970-01-01"), by="day"), dim(mpg)[1]/2)
+mpg$dp[which(mpg$year == "2008")] <- sample(seq(as.Date('2008-01-01', format = "%Y-%m-%d", origin = "1970-01-01"), as.Date('2008-12-25', format = "%Y-%m-%d", origin = "1970-01-01"), by="day"), dim(mpg)[1]/2)
+
+mpg$cyl <- factor(mpg$cyl, levels = c(4, 5, 6, 8), ordered = TRUE)
+mpg$trans <- factor(mpg$trans)
+mpg$drv <- factor(mpg$drv, levels = c("f", "r", "4"), labels = c("front-wheel drive", "rear wheel drive", "4wd"))
+mpg$fl <- factor(mpg$fl)
+mpg$class <- factor(mpg$class)
+
+mpg$rn <- rnorm(dim(mpg)[1], mean = 10, sd = 5)
+mpg$rn[sample(1:length(mpg$rn), size = 50)] <- NA
+
+mpg$party <- factor(sample(c("republican", "democrat", "independent", NA), dim(mpg)[1], replace = TRUE), levels = c("republican", "democrat", "independent"))
+mpg$comments <- sample(c("I like this car!", "Meh.", "This is the worst car ever!", "Does it come in green?", "want cheese flavoured cars.", "Does it also fly?", "Blah, Blah, Blah, Blah, Blah, Blah, Blah, Blah", NA), dim(mpg)[1], replace = TRUE)
+
+label(mpg$manu) <- "manufacturer"
+label(mpg$model) <- "model name"
+label(mpg$displ) <- "engine displacement, in litres"
+label(mpg$year) <- "year of manufacture"
+label(mpg$dp) <- "date of purchase"
+label(mpg$cyl) <- "number of cylinders"
+label(mpg$trans) <- "type of transmission"
+label(mpg$drv) <- "drive type"
+label(mpg$cty) <- "city miles per gallon"
+label(mpg$hwy) <- "highway miles per gallon"
+label(mpg$fl) <- "fuel type"
+label(mpg$class) <- "type of car"
+label(mpg$rn) <- "some random numbers that are generated from a normal distrubtion with mean = 10 and sd = 5"
+label(mpg$party) <- "some random political parties"
+label(mpg$comments) <- "some random comments"
+
+kable(head(mpg), caption = "Header of <b>mpg</b>.", booktabs = TRUE, escape = FALSE) %>% kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+
+# Data Dictionary
+
+After the data is set up, the data dictionary can be printed as follows.
+
+```{r dataDictionary, eval = TRUE, echo = TRUE, warning = FALSE, message = FALSE}
+html(contents(mpg), 
+     sortlevels = TRUE,
+     maxlevels = Inf, 
+     levelType = "table")
+```
+
+# Analytic Data
+
+This analytic data is created using the <i>datatable</i> function of the <i>DT</i> library.  There are many options here, so I will only cover the high points.  For more information check out the excellent documentation <a href="https://rstudio.github.io/DT/" target="_blank">here</a>.
+
+The main things I want to show are the extensions declared by the <i>extensions</i> argument.  The <i>Buttons</i> option creates buttons so that the end user can download the data set in various formats.  The <i>KeyTable</i> allows users to select cells within the table and navigate similar to how they would in spreadsheet software.  The <i>FixedColumns</i> allows us to create fixed columns that follow the cursor and scroll bars.
+
+Another thing to keep in mind is to remove commas from the analytic data set if you want to allow users to export to a CSV format.
+
+```{r analyticData, eval = TRUE, echo = TRUE, warning = FALSE, message = FALSE}
+commas <- lapply(mpg, grep, pattern = ",")
+commas <- names(which(unlist(lapply(commas, length)) > 0))
+mpg[, commas] <- gsub(",", "_comma_", mpg[, commas], fixed = TRUE)
+
+datatable(mpg, escape = FALSE,
+          extensions = c('Buttons', 'KeyTable', 'FixedColumns'),
+          class = 'cell-border stripe',
+          rownames = TRUE,
+          options = list(
+            dom = 'Bfrtip',
+            pageLength = 5,
+            deferRender = TRUE,
+            fixedColumns = list(leftColumns = 1),
+            responsive = TRUE,
+            scrollX = TRUE,
+            scrollCollaspe = TRUE,
+            paging = TRUE,
+            autoWidth = TRUE,
+            keys = TRUE,
+            buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+          ))
+```
+
+# Session Info
+
+```{r sessionInfo, eval = TRUE, echo = TRUE, results = TRUE, warning = FALSE, message = FALSE}
+sessionInfo()
+```
+
+# References
+
+<!-- This is needed to resize iframe content. Please ignore if duplicationg this R markdown file --> 
+<script type="text/javascript" src="https://www.waderstats.com/wp-includes/js/iframe-resizer/js/iframeResizer.contentWindow.min.js" defer></script>
