@@ -23,7 +23,7 @@ An analytic data set should include the following:
 * Variable labels
 * Variable coding
 
-This presentation will use the R programming language and assume the user is using Rstudio to compile their R markdown files into HTML [@Rlang2019; @Rstudio].  If you want to follow along with the R markdown, it can be downloaded <a href="https://waderstats.com/rstudio-files/creating_an_analytic_data_set/creating_an_analytic_data_set.Rmd" target="_blank">here</a>.  The associated bibliography file is <a href="https://waderstats.com/rstudio-files/creating_an_analytic_data_set/creating_an_analytic_data_set.bib" target="_blank">here</a>.
+This presentation uses the R programming language and assumes the end user is taking advantage of RStudio IDE to compile their R markdown files into HTML [@Rlang2019; @Rstudio].  All of the files needed to reproduce these results can be downloaded from the Git repository <code>git clone <span>https</span>://git.waderstats.com/creating_an_analytic_data_set/</code>.
 
 # Libraries
 
