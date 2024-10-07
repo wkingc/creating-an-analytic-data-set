@@ -7,8 +7,8 @@ output:
     theme: default
     highlight: textmate
     code_folding: show
-    mathjax: local
-    self_contained: FALSE
+    mathjax: defaul
+    self_contained: TRUE
     number_sections: FALSE
 ---
 
@@ -23,7 +23,7 @@ An analytic data set should include the following:
 * Variable labels
 * Variable coding
 
-This presentation uses the R programming language and assumes the end user is taking advantage of RStudio IDE to compile their R markdown files into HTML [@Rlang2019; @Rstudio].  All of the files needed to reproduce these results can be downloaded from the Git repository <code>git clone <span>https</span>://git.waderstats.com/creating_an_analytic_data_set/</code>.
+This presentation uses the R programming language and assumes the end user is taking advantage of RStudio IDE to compile their R markdown files into HTML [@Rlang2019; @Rstudio].  All of the files needed to reproduce these results can be downloaded from the Git repository <a href="https://github.com/wkingc/creating-an-analytic-data-set" target="_blank">https://github.com/wkingc/creating-an-analytic-data-set</a>.
 
 # Libraries
 
@@ -154,6 +154,3 @@ sessionInfo()
 ```
 
 # References
-
-<!-- This is needed to resize iframe content. Please ignore if duplicationg this R markdown file --> 
-<script type="text/javascript" src="https://www.waderstats.com/wp-includes/js/iframe-resizer/js/iframeResizer.contentWindow.min.js" defer></script>
