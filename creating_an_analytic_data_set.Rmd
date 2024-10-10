@@ -9,7 +9,7 @@ output:
     theme: default
     highlight: textmate
     code_folding: show
-    mathjax: defaul
+    mathjax: default
     self_contained: TRUE
     number_sections: FALSE
 ---
