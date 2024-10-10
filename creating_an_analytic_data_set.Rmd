@@ -1,4 +1,6 @@
 ---
+title: "Data Summaries in R"
+author: "Wade K. Copeland"
 bibliography: creating_an_analytic_data_set.bib
 biblio-style: apalike
 link-citations: yes
