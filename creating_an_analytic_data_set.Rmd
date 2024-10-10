@@ -1,5 +1,5 @@
 ---
-title: "Data Summaries in R"
+title: "Creating an Analytic Data Set"
 author: "Wade K. Copeland"
 bibliography: creating_an_analytic_data_set.bib
 biblio-style: apalike
@@ -33,8 +33,8 @@ The libraries <i>knitr</i>, <i>bookdown</i>, and <i>kableExtra</i> are used to g
 
 ```{r libraries, eval = TRUE, echo = TRUE, results = TRUE, warning = FALSE, message = FALSE}
 package_loader <- function(x, ...) {
-  if (x %in% rownames(installed.packages()) == FALSE) install.packages(x)
-  library(x, ...)
+    if (x %in% rownames(installed.packages()) == FALSE) install.packages(x)
+    library(x, ...)
 }
 
 packages <- c("knitr", "bookdown", "kableExtra", "ggplot2", "Hmisc", "DT")
@@ -72,8 +72,8 @@ mpg$displ <- as.numeric(mpg$displ)
 mpg$year <- factor(mpg$year, levels = c("1999", "2008"), ordered = TRUE)
 
 mpg$dp <- as.Date(NA, origin = "1970-01-01")
-mpg$dp[which(mpg$year == "1999")] <- sample(seq(as.Date('1999-01-01', format = "%Y-%m-%d", origin = "1970-01-01"), as.Date('1999-12-25', format = "%Y-%m-%d", origin = "1970-01-01"), by="day"), dim(mpg)[1]/2)
-mpg$dp[which(mpg$year == "2008")] <- sample(seq(as.Date('2008-01-01', format = "%Y-%m-%d", origin = "1970-01-01"), as.Date('2008-12-25', format = "%Y-%m-%d", origin = "1970-01-01"), by="day"), dim(mpg)[1]/2)
+mpg$dp[which(mpg$year == "1999")] <- sample(seq(as.Date('1999-01-01', format = "%Y-%m-%d", origin = "1970-01-01"), as.Date('1999-12-25', format = "%Y-%m-%d", origin = "1970-01-01"), by = "day"), dim(mpg)[1]/2)
+mpg$dp[which(mpg$year == "2008")] <- sample(seq(as.Date('2008-01-01', format = "%Y-%m-%d", origin = "1970-01-01"), as.Date('2008-12-25', format = "%Y-%m-%d", origin = "1970-01-01"), by = "day"), dim(mpg)[1]/2)
 
 mpg$cyl <- factor(mpg$cyl, levels = c(4, 5, 6, 8), ordered = TRUE)
 mpg$trans <- factor(mpg$trans)
@@ -112,9 +112,9 @@ After the data is set up, the data dictionary can be printed as follows.
 
 ```{r dataDictionary, eval = TRUE, echo = TRUE, warning = FALSE, message = FALSE}
 html(contents(mpg), 
-     sortlevels = TRUE,
-     maxlevels = Inf, 
-     levelType = "table")
+    sortlevels = TRUE,
+    maxlevels = Inf, 
+    levelType = "table")
 ```
 
 # Analytic Data
@@ -130,23 +130,24 @@ commas <- lapply(mpg, grep, pattern = ",")
 commas <- names(which(unlist(lapply(commas, length)) > 0))
 mpg[, commas] <- gsub(",", "_comma_", mpg[, commas], fixed = TRUE)
 
-datatable(mpg, escape = FALSE,
-          extensions = c('Buttons', 'KeyTable', 'FixedColumns'),
-          class = 'cell-border stripe',
-          rownames = TRUE,
-          options = list(
-            dom = 'Bfrtip',
-            pageLength = 5,
-            deferRender = TRUE,
-            fixedColumns = list(leftColumns = 1),
-            responsive = TRUE,
-            scrollX = TRUE,
-            scrollCollaspe = TRUE,
-            paging = TRUE,
-            autoWidth = TRUE,
-            keys = TRUE,
-            buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
-          ))
+datatable(
+    mpg, escape = FALSE,
+    extensions = c('Buttons', 'KeyTable', 'FixedColumns'),
+    class = 'cell-border stripe',
+    rownames = TRUE,
+    options = list(
+        dom = 'Bfrtip',
+        pageLength = 5,
+        deferRender = TRUE,
+        fixedColumns = list(leftColumns = 1),
+        responsive = TRUE,
+        scrollX = TRUE,
+        scrollCollaspe = TRUE,
+        paging = TRUE,
+        autoWidth = TRUE,
+        keys = TRUE,
+        buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+    ))
 ```
 
 # Session Info
